@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="author" content="jblv">
+    <meta name="description" content="Group Project 4 Query 3">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <link rel="stylesheet" href="../static/styles.css">
+    <title>Query 3: Checking out</title>
+</head>
+
+<!--Not really sure how we want to go about displaying the bill-->
+<!--Do we want to display the price of each service or just have the total bill amount?-->
+<!--Might need to adjust what inputs the user gives to the application-->
+<!--Need to add "check out" button-->
+
+<body>
+    <h2>Hotel Room Check Out</h2>
+    <form>
+        <div>
+            First Name: <input name="firstname" type="text" value="Jeanne"> &nbsp;
+            Last Name: <input name="lastname" type="text" value="Wright"> &nbsp;
+            Date of Checkout: <input id="checkoutDate" input name="date" type="date" value="{{ date }}"> &nbsp;
+            <input type="hidden" id="checkoutDate" name="date" value="{{ date }}">
+            <input class="button-56" type="submit" value="Get Info">
+        </div>
+    </form>
+    {% if data is not defined %}
+    <p>Enter the guest's first name, last name, and the date of checkout to get the bill.</p>
+    {% elif data %}
+    <div id="table_div"></div>
+    <form method="POST" action="{{ url_for('final_check_out') }}">
+        <!-- Add hidden fields to pass firstname, lastname, and date -->
+        <input type="hidden" name="firstname" value="{{ firstname }}">
+        <input type="hidden" name="lastname" value="{{ lastname }}">
+        <input type="hidden" name="date" value="{{ date }}">
+        <!-- Add a submit button -->
+        <input class="button-56" type="submit" value="Check Out">
+    </form>
+    <script type="text/javascript">
+
+
+        // make sure data being passed ok
+        var jsonData = {{ data| tojson }};
+        console.log("Data: ", jsonData)
+        google.charts.load('current', { 'packages': ['table'] });
+        google.charts.setOnLoadCallback(drawTable);
+
+        function drawTable() {
+            var data = new google.visualization.DataTable();
+
+            data.addColumn('string', 'Guest First Name');
+            data.addColumn('string', 'Guest Last Name');
+            data.addColumn('number', 'Reservation ID');
+            data.addColumn('date', 'Check-In Date');
+            data.addColumn('date', 'Check-Out Date');
+            data.addColumn('number', 'Days Stayed');
+            data.addColumn('number', 'Room Number');
+            data.addColumn('number', 'Room Price');
+            data.addColumn('number', 'Total Discounted Room Price');
+            data.addColumn('number', 'Total Service Price');
+            data.addColumn('number', 'Total Amount Due');
+
+
+            data.addRow([
+                jsonData[0][0],
+                jsonData[0][1],
+                jsonData[0][2],
+                new Date(jsonData[0][3]),
+                new Date(jsonData[0][4]),
+                jsonData[0][5],
+                jsonData[0][6],
+                parseFloat(jsonData[0][7]),
+                parseFloat(jsonData[0][8]),
+                parseFloat(jsonData[0][9]),
+                parseFloat(jsonData[0][10])
+            ]);
+
+            var table = new google.visualization.Table(document.getElementById('table_div'));
+            table.draw(data, { showRowNumber: true, page: true, pageSize: 50 });
+
+
+
+        }
+    </script>
+
+    {% else %}
+    <p>Please enter a valid guest's first name, last name, and checkout date.</p>
+    {% endif %}
+</body>
+
+</html>

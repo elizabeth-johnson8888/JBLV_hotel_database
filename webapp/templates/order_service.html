@@ -1,0 +1,25 @@
+<html>
+
+<head>
+    <title>Flight Reserve</title>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <link rel="stylesheet" href="../static/styles.css">
+</head>
+
+<body>
+    <h2 style="margin-top: 1em;">Order Service: {{ service_name }}</h2>
+    <!-- Get a reservation to grab a bill from -->
+    <form>
+        <div>
+            <input name="service_name" type="hidden" value="{{ service_name }}">
+            Reservation: <input id="reservation_id" name="reservation_id" type="number" size="10">
+            <input class="button-56" type="submit" value="Order It!">
+        </div>
+    </form>
+    {% for message in get_flashed_messages() %}
+    <p><i>{{ message }}</i></p>
+    {% endfor %}
+    <a href="{{ url_for('index') }}"><button class="button-56" type="button">Home</button></a>
+</body>
+
+</html>

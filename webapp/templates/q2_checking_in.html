@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="author" content="jblv">
+    <meta name="description" content="Group Project 4 Query 2">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <link rel="stylesheet" href="../static/styles.css">
+    <title>Query 2: Checking in</title>
+</head>
+
+<!--Note: need to add button for clerk to click on in order to assign room to guests-->
+<!--Update tables to reflect the check in? might need guest id-->
+<!--Feels weird to have a hotel input; you wouldn't want to accidentally input data for the wrong hotel-->
+
+<body>
+    <h2>Hotel Room Check In</h2>
+    <p>Find all of the available and clean double suites at the Hotel for today's date.</p>
+    <form>
+        <div>
+            Check-in date: <input name="checkin" type="date" value="{{ checkin }}"> &nbsp;
+            Hotel ID: <input name="hotelid" type="number" value="{{ hotelid }}"> &nbsp;
+            <input class="button-56" type="submit">
+        </div>
+    </form>
+    {% if data %}
+    <div id="table_div"></div>
+    <script type="text/javascript">
+        google.charts.load('current', { 'packages': ['table'] });
+        google.charts.setOnLoadCallback(drawTable);
+
+        function drawTable() {
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Room_Num');
+            data.addColumn('string', 'Floor_Num');
+
+            data.addRows([
+                {% for row in data %}
+        ['{{ row[0] }}', '{{ row[1] }}'],
+            {% endfor %}
+            ]);
+
+        var table = new google.visualization.Table(document.getElementById('table_div'));
+        table.draw(data, { showRowNumber: true, page: true, pageSize: 50, allowHtml: true });
+
+        // gets room number
+        google.visualization.events.addListener(table, "select", function () {
+            let selection = table.getSelection();
+            let item = selection[0];
+            if (item) {
+                let room_num = document.getElementById('room_num');
+                room_num.value = data.getValue(item.row, 0);
+            }
+        });
+        }
+    </script>
+    <form action="reserve_room_num?checkin={{ checkin }}">
+        <div>
+            Selected Room: <input id="room_num" name="room_num" type="text" size="10">
+            <!-- First Name: <input id="first_name" name="first_name" type="text" size="10">
+            Last Name: <input id="last_name" name="last_name" type="text" size="10"> -->
+            <input class="button-56" type="submit" value="Check In">
+        </div>
+    </form>
+    {% endif %}
+</body>
+
+</html>

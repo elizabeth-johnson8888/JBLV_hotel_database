@@ -1,0 +1,24 @@
+<html>
+
+<head>
+    <title>Checkout Success</title>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <link rel="stylesheet" href="../static/styles.css">
+</head>
+
+<body>
+    <h2 style="margin-top: 1em;">Checkout</h2>
+    <!-- <form>
+        <input name="service_name" type="hidden" value="{{ service_name }}">
+        First Name: <input name="first_name" type="text" value="{{ first_name }}"> &nbsp;
+        Last Name: <input name="last_name" type="text" value="{{ last_name }}"> &nbsp;
+        <input type="submit" value="Check In!">
+    </form> -->
+    {% for message in get_flashed_messages() %}
+    <p><i>{{ message }}</i></p>
+    {% endfor %}
+
+    <a href="{{ url_for('index') }}"><button class="button-56" type="button">Home</button></a>
+</body>
+
+</html>
