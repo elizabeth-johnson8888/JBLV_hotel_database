@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="author" content="jblv">
+    <meta name="description" content="Group Project 4 Query 1">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <link rel="stylesheet" href="../static/styles.css">
+
+    <title>Query 1: Reservations</title>
+</head>
+
+<body>
+    <h2>Reserve Hotel Room</h2>
+    <form>
+        <div>
+            Hotel ID: <input name="hotelid" type="number" value="{{ hotelid }}"> &nbsp;
+            Check-in date: <input name="checkin" type="date" value="{{ checkin }}"> &nbsp;
+            Check-out date: <input name="checkout" type="date" value="{{ checkout }}"> &nbsp;
+            <input class="button-56" type="submit">
+        </div>
+    </form>
+    {% if data %}
+    <div id="table_div"></div>
+    <script type="text/javascript">
+        google.charts.load('current', { 'packages': ['table'] });
+        google.charts.setOnLoadCallback(drawTable);
+
+        function drawTable() {
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'available room types');
+            data.addColumn('string', 'average cost per night');
+
+            data.addRows([
+                {% for row in data %}
+        [{% for i in range(2) %}'{{ row[i] }}', {% endfor %}],
+        {% endfor %}
+            ]);
+
+        var table = new google.visualization.Table(document.getElementById('table_div'));
+        table.draw(data, { showRowNumber: true, page: true, pageSize: 50 });
+
+        // gets room id
+        google.visualization.events.addListener(table, "select", function () {
+            let selection = table.getSelection();
+            let item = selection[0];
+            if (item) {
+                let room_id = document.getElementById('room_id');
+                room_id.value = data.getValue(item.row, 0);
+            }
+        });
+        }
+    </script>
+    After selecting which rooms to reserve, fill out the following information and then select "Make reservation."
+    <form action="made_reservation">
+        <p>
+            <input name="hotelid" type="hidden" value="{{ hotelid }}"> &nbsp;
+            <input name="checkin" type="hidden" value="{{ checkin }}"> &nbsp;
+            <input name="checkout" type="hidden" value="{{ checkout }}"> &nbsp;
+            Selected Room Type: <input id="room_id" name="room_id" type="text" size="10"><br>
+            <label for="first_name">First name:</label>
+            <input id="first_name" name="first_name" type="text" size="10" value="John"><br>
+            <label for="last_name">Last name:</label>
+            <input id="last_name" name="last_name" type="text" size="10" value="Doe"><br>
+            <label for="mobile_phone">Mobile Phone:</label>
+            <input id="mobile_phone" name="mobile_phone" type="tel" size="10" value="000-000-0000"><br>
+            <label for="home_phone">Home Phone:</label>
+            <input id="home_phone" name="home_phone" type="tel" size="10" value="000-000-0000"><br>
+            <label for="id_type">ID Type:</label>
+            <select name="id_type" id="id_type">
+                <option value="Passport">Passport</option>
+                <option value="Driver's license">Driver's license</option>
+                <option value="State ID">State ID</option>
+                <option value="Student ID">Student ID</option>
+                <option value="Military ID">Military ID</option>
+            </select>
+            <label for="id_number">ID Number:</label>
+            <input id="id_number" name="id_number" type="number" size="10" value="123456789"><br>
+            <input class="button-56" type="submit" value="Make reservation">
+        </p>
+    </form>
+    {% endif %}
+</body>
+
+</html>

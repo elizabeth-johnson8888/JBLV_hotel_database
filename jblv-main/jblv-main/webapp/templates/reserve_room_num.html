@@ -1,0 +1,75 @@
+<html>
+
+<head>
+    <title>Reserve Room</title>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <link rel="stylesheet" href="../static/styles.css">
+</head>
+
+<body>
+    <h2 style="margin-top: 1em;">Check In Room: {{ roomnum }}</h2>
+    <!-- <form>
+        <input name="service_name" type="hidden" value="{{ service_name }}">
+        First Name: <input name="first_name" type="text" value="{{ first_name }}"> &nbsp;
+        Last Name: <input name="last_name" type="text" value="{{ last_name }}"> &nbsp;
+        <input type="submit" value="Check In!">
+    </form> -->
+    {% for message in get_flashed_messages() %}
+    <p><i>{{ message }}</i></p>
+    {% endfor %}
+    {% if data %}
+    <div id="table_div"></div>
+    <script type="text/javascript">
+        google.charts.load('current', { 'packages': ['table'] });
+        google.charts.setOnLoadCallback(drawTable);
+
+        function drawTable() {
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Guest_ID');
+            data.addColumn('string', 'Reservation_ID');
+            data.addColumn('string', 'First_Name');
+            data.addColumn('string', 'Last_Name');
+
+            data.addRows([
+                {% for row in data %}
+                [{% for i in range(4) %}'{{ row[i] }}', {% endfor %}],
+                {% endfor %}
+            ]);
+
+            var table = new google.visualization.Table(document.getElementById('table_div'));
+            table.draw(data, { showRowNumber: true, page: true, pageSize: 50, allowHtml: true });
+
+            // gets guest id and reservation_id
+            google.visualization.events.addListener(table, "select", function() {
+                let selection = table.getSelection();
+                let item = selection[0];
+                if (item) {
+                    let guestid = document.getElementById('guestid');
+                    let resid = document.getElementById('resid');
+                    let firstnme = document.getElementById('firstnme');
+                    let lastnme = document.getElementById('lastnme');
+
+                    guestid.value = data.getValue(item.row, 0);
+                    resid.value = data.getValue(item.row, 1);
+                    firstnme.value = data.getValue(item.row, 2);
+                    lastnme.value = data.getValue(item.row, 3);
+                }
+            });
+        }
+    </script>
+    <form action="final_check_in?roomnum={{ roomnum }}">
+    <!-- <form action="final_check_in"> -->
+        <div>
+            Guest Id: <input id="guestid" name="guestid" type="text" size="10">
+            Reservation ID: <input id="resid" name="resid" type="text" size="10">
+            First Name: <input id="firstnme" name="firstnme" type="text" size="10">
+            Last Name: <input id="lastnme" name="lastnme" type="text" size="10">
+
+            <input class="button-56" type="submit" value="Check In">
+        </div>
+    </form>
+    {% endif %}
+    <a href="{{ url_for('index') }}"><button class="button-56" type="button">Home</button></a>
+</body>
+
+</html>
